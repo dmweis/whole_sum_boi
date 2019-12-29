@@ -1,2 +1,2 @@
-# whole_sum_boi
+# WholeSumBoi
 Twitch bot written in rust

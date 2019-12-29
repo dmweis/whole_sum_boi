@@ -6,39 +6,46 @@ use serde::{Serialize, Deserialize};
 use std::fs::{self, File};
 use std::io::prelude::*;
 
+/// Data structure for representing when an
+/// action should match message
 #[derive(Serialize, Deserialize, Clone)]
 pub enum TriggerType {
     Contains(String),
     Equivalent(String),
 }
 
+/// Data structure for representing type
+/// of a response an action generates
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ResponseType {
     Static(String),
     Repeat,
 }
 
+/// Data structure defining how to match
+/// to a messages and what response to generate
 #[derive(Serialize, Deserialize, Clone)]
-pub struct MessageHandler {
+pub struct Action {
     trigger: TriggerType,
     response: ResponseType,
 }
 
-impl MessageHandler {
+impl Action {
     #[allow(dead_code)]
-    pub fn new(trigger: TriggerType, response: ResponseType) -> MessageHandler {
-        MessageHandler {
+    pub fn new(trigger: TriggerType, response: ResponseType) -> Action {
+        Action {
             trigger,
             response,
         }
     }
 }
 
+/// Data structure used for serializing channel handlers
 #[derive(Serialize, Deserialize)]
 struct ChannelHandlerConfig {
     name: String,
     user_timeout: Duration,
-    handlers: Vec<MessageHandler>,
+    handlers: Vec<Action>,
 }
 
 impl ChannelHandlerConfig {
@@ -52,12 +59,15 @@ impl ChannelHandlerConfig {
     }
 }
 
+/// Massed handler for channel
+/// One should be created for each channel and
+/// messages for that channel should be routed into it
 pub struct ChannelHandler {
     name: String,
     writer: Writer,
     user_timeouts: HashMap<String, Instant>,
     user_timeout: Duration,
-    handlers: Vec<MessageHandler>,
+    handlers: Vec<Action>,
 }
 
 impl ChannelHandler {
@@ -172,6 +182,6 @@ impl ChannelHandler {
 
     #[allow(dead_code)]
     pub fn add_handler(&mut self, trigger_type: TriggerType, response: ResponseType) {
-        self.handlers.push(MessageHandler::new(trigger_type, response));
+        self.handlers.push(Action::new(trigger_type, response));
     }
 }

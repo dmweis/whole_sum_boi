@@ -17,9 +17,9 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     
     let writer = client.writer();
 
-    // let mut example_handler = ChannelHandler::load_json("example.json", writer)?;
+    let mut example_handler = ChannelHandler::load_json("example.json", writer)?;
     // let mut example_handler = ChannelHandler::new("default", writer);
-    let mut example_handler = ChannelHandler::load_yaml("example.yaml", writer)?;
+    // let mut example_handler = ChannelHandler::load_yaml("example.yaml", writer)?;
 
     // example_handler.add_handler(Contains("his name".to_owned()), Static("His name is Jeffbob Blobby Ewing".to_owned()));
     // example_handler.add_handler(Contains("sombreros".to_owned()), Static("Did you mean hats?".to_owned()));
