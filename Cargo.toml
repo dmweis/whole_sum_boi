@@ -1,0 +1,10 @@
+[package]
+name = "whole_sum_boi"
+version = "0.1.0"
+authors = ["David Weis <davidmichaelweis@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+twitchchat = "0.7.2"
