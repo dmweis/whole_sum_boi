@@ -8,7 +8,7 @@ use twitchchat::*;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     let username = env::var("TWITCH_USER_NAME").expect("bot needs twitch username");
-    let oauth_key = env::var("TWITCH_OAUTH_KEY").expect("bot needs twitch username");
+    let oauth_key = env::var("TWITCH_OAUTH_KEY").expect("bot needs twitch oauth key");
     
     let mut client = twitchchat::connect_easy(username, oauth_key)
     .unwrap()
@@ -17,14 +17,16 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     
     let writer = client.writer();
 
-    let mut example_handler = ChannelHandler::new("client_name", writer);
+    // let mut example_handler = ChannelHandler::load_json("example.json", writer)?;
+    // let mut example_handler = ChannelHandler::new("default", writer);
+    let mut example_handler = ChannelHandler::load_yaml("example.yaml", writer)?;
 
-    example_handler.add_handler(Contains("his name".to_owned()), Static("His name is Jeffbob Blobby Ewing".to_owned()));
-    example_handler.add_handler(Contains("sombreros".to_owned()), Static("Did you mean hats?".to_owned()));
-    example_handler.add_handler(Contains("kapelusz".to_owned()), Static("Did you mean hats?".to_owned()));
-    example_handler.add_handler(Contains("hats".to_owned()), Static("@client_name could you please adjust the hats and googly eyes?".to_owned()));
-    example_handler.add_handler(Contains("blurp".to_owned()), Static("Oh no. Look out she is gonna kill him again!!!".to_owned()));
-    example_handler.add_handler(Contains("bot say:".to_owned()), Repeat);
+    // example_handler.add_handler(Contains("his name".to_owned()), Static("His name is Jeffbob Blobby Ewing".to_owned()));
+    // example_handler.add_handler(Contains("sombreros".to_owned()), Static("Did you mean hats?".to_owned()));
+    // example_handler.add_handler(Contains("kapelusz".to_owned()), Static("Did you mean hats?".to_owned()));
+    // example_handler.add_handler(Contains("hats".to_owned()), Static("@consideratepotato could you please adjust the hats and googly eyes?".to_owned()));
+    // example_handler.add_handler(Contains("blurp".to_owned()), Static("Oh no. Look out she is gonna kill him again!!!".to_owned()));
+    // example_handler.add_handler(Contains("bot say:".to_owned()), Repeat);
 
     for event in &mut client {
         match event {
