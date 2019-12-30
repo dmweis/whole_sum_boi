@@ -25,5 +25,5 @@ handlers:
     response:
       Static: Oh no. Look out she is gonna kill him again!!!
   - trigger:
-      Contains: "bot say:"
+      StartsWith: "bot say:"
     response: Repeat

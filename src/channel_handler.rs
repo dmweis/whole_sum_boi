@@ -11,6 +11,7 @@ use std::io::prelude::*;
 #[derive(Serialize, Deserialize, Clone)]
 pub enum TriggerType {
     Contains(String),
+    StartsWith(String),
     Equivalent(String),
 }
 
@@ -171,7 +172,21 @@ impl ChannelHandler {
                         sent_message = true;
                         break;
                     }
-                }
+                },
+                TriggerType::StartsWith(text) => {
+                    if message_text.to_lowercase().starts_with(&text.to_lowercase()) {
+                        match &handler.response {
+                            ResponseType::Static(response_text) => {
+                                self.writer.send(&self.name, &response_text)?;
+                            },
+                            ResponseType::Repeat => {
+                                self.writer.send(&self.name, &message.message().replace(text, ""))?;
+                            },
+                        }
+                        sent_message = true;
+                        break;
+                    }
+                },
             }
         }
         if sent_message {
