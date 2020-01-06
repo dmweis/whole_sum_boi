@@ -1,55 +1,91 @@
 {
-  "name": "consideratepotato",
-  "user_timeout": {
-    "secs": 10,
-    "nanos": 0
-  },
-  "handlers": [
+  "bots": [
     {
-      "trigger": {
-        "Contains": "his name"
+      "name": "consideratepotato",
+      "user_timeout": {
+        "secs": 10,
+        "nanos": 0
       },
-      "response": {
-        "Static": "His name is Jeffbob Blobby Ewing"
-      }
-    },
-    {
-      "trigger": {
-        "Contains": "sombreros"
-      },
-      "response": {
-        "Static": "Did you mean hats?"
-      }
-    },
-    {
-      "trigger": {
-        "Contains": "kapelusz"
-      },
-      "response": {
-        "Static": "Did you mean hats?"
-      }
-    },
-    {
-      "trigger": {
-        "Contains": "hats"
-      },
-      "response": {
-        "Static": "@consideratepotato could you please adjust the hats and googly eyes?"
-      }
-    },
-    {
-      "trigger": {
-        "Contains": "blurp"
-      },
-      "response": {
-        "Static": "Oh no. Look out she is gonna kill him again!!!"
-      }
-    },
-    {
-      "trigger": {
-        "StartsWith": "bot say:"
-      },
-      "response": "Repeat"
+      "handlers": [
+        {
+          "trigger": {
+            "Contains": "his name"
+          },
+          "response": {
+            "Static": "His name is Jeffbob Blobby Ewing"
+          }
+        },
+        {
+          "trigger": {
+            "Contains": "sombreros"
+          },
+          "response": {
+            "Static": "Did you mean hats?"
+          }
+        },
+        {
+          "trigger": {
+            "Contains": "kapelusz"
+          },
+          "response": {
+            "Static": "Did you mean hats?"
+          }
+        },
+        {
+          "trigger": {
+            "Contains": " hats"
+          },
+          "response": {
+            "Static": "@consideratepotato could you please adjust the hats and googly eyes?"
+          }
+        },
+        {
+          "trigger": {
+            "Contains": "hats "
+          },
+          "response": {
+            "Static": "@consideratepotato could you please adjust the hats and googly eyes?"
+          }
+        },
+        {
+          "trigger": {
+            "Equivalent": "hats"
+          },
+          "response": {
+            "Static": "@consideratepotato could you please adjust the hats and googly eyes?"
+          }
+        },
+        {
+          "trigger": {
+            "Contains": "blurp"
+          },
+          "response": {
+            "Static": "Oh no. Look out she is gonna kill him again!!!"
+          }
+        },
+        {
+          "trigger": {
+            "StartsWith": "bot say:"
+          },
+          "response": "Repeat"
+        },
+        {
+          "trigger": {
+            "Contains": "discord"
+          },
+          "response": {
+            "Static": "You can join consideratepotato's discord here: https://discord.gg/eP7gV4v"
+          }
+        },
+        {
+          "trigger": {
+            "Contains": "nominations"
+          },
+          "response": {
+            "Static": "1. Uško 2. Blurp"
+          }
+        }
+      ]
     }
   ]
 }

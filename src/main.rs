@@ -1,8 +1,9 @@
 mod channel_handler;
+mod bot_handler;
 
 use std::env;
 use std::error;
-use channel_handler::{*, TriggerType::*, ResponseType::*};
+use bot_handler::*;
 use twitchchat::commands;
 use twitchchat::*;
 
@@ -13,33 +14,39 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let mut client = twitchchat::connect_easy(username, oauth_key)
     .unwrap()
     .filter::<commands::PrivMsg>()
-    .filter::<commands::Join>();
+    .filter::<commands::NamesStart>()
+    .filter::<commands::NamesEnd>()
+    .filter::<commands::Join>()
+    .filter::<commands::Part>();
     
     let writer = client.writer();
 
-    let mut example_handler = ChannelHandler::load_json("example.json", writer)?;
-    // let mut example_handler = ChannelHandler::new("default", writer);
-    // let mut example_handler = ChannelHandler::load_yaml("example.yaml", writer)?;
+    let mut bot_handler = BotHandler::load_yaml("example.yaml", writer)?;
 
-    // example_handler.add_handler(Contains("his name".to_owned()), Static("His name is Jeffbob Blobby Ewing".to_owned()));
-    // example_handler.add_handler(Contains("sombreros".to_owned()), Static("Did you mean hats?".to_owned()));
-    // example_handler.add_handler(Contains("kapelusz".to_owned()), Static("Did you mean hats?".to_owned()));
-    // example_handler.add_handler(Contains("hats".to_owned()), Static("@consideratepotato could you please adjust the hats and googly eyes?".to_owned()));
-    // example_handler.add_handler(Contains("blurp".to_owned()), Static("Oh no. Look out she is gonna kill him again!!!".to_owned()));
-    // example_handler.add_handler(Contains("bot say:".to_owned()), Repeat);
+    bot_handler.save_json("example.json")?;
 
     for event in &mut client {
         match event {
             Event::TwitchReady(usr) => {
                 println!("Joined twitch as {:?}", usr);
-                example_handler.join_channel()?;
+                bot_handler.join_channels()?;
+            }
+            Event::Message(Message::NamesStart(start)) => {
+                println!("Users start {:?} on {}", start.users(), start.channel());
+            }
+            Event::Message(Message::NamesEnd(end)) => {
+                println!("user end {}", end.channel());
             }
             Event::Message(Message::PrivMsg(msg)) => {
                 println!("priv msg {}: {}", msg.user(), msg.message());
-                example_handler.handle_message(&msg)?;
+                bot_handler.handle_message(&msg)?;
             }
             Event::Message(Message::Join(msg)) => {
                 println!("*** {} joined {}", msg.user(), msg.channel());
+                bot_handler.handle_join(&msg)?;
+            }
+            Event::Message(Message::Part(msg)) => {
+                println!("*** {} left {}", msg.user(), msg.channel());
             }
             Event::Message(Message::Irc(message)) => {
                 println!("IRC msg {:?}", message);
