@@ -197,7 +197,7 @@ impl ChannelHandler {
         Ok(())
     }
 
-    pub fn handle_join(&mut self, message: &Join) -> Result<(), Box<dyn Error>> {
+    pub fn handle_join(&mut self, _: &Join) -> Result<(), Box<dyn Error>> {
         // handle channel connections here
         Ok(())
     }
