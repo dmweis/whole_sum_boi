@@ -6,6 +6,7 @@ use serde::{Serialize, Deserialize};
 use std::fs::{self, File};
 use std::io::prelude::*;
 use regex::Regex;
+use reqwest;
 
 /// Data structure for representing when an
 /// action should match message
@@ -24,6 +25,23 @@ pub enum TriggerType {
 pub enum ResponseType {
     Static(String),
     Repeat,
+    DadJoke
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct DadJoke {
+    id: String,
+    joke: String,
+    status: i32,
+}
+
+fn get_dad_joke() -> Result<String, Box<dyn Error>> {
+    let client = reqwest::blocking::Client::new();
+    let res: DadJoke = client.get("https://icanhazdadjoke.com/")
+        .header("Accept", "application/json")
+        .send()?
+        .json()?;
+    Ok(res.joke)
 }
 
 /// Data structure defining how to match
@@ -159,6 +177,9 @@ impl ChannelHandler {
                             ResponseType::Repeat => {
                                 self.writer.send(&self.name, &message.message().replace(text, ""))?;
                             },
+                            ResponseType::DadJoke => {
+                                self.writer.send(&self.name, &get_dad_joke()?)?;
+                            }
                         }
                         sent_message = true;
                         break;
@@ -173,6 +194,9 @@ impl ChannelHandler {
                             ResponseType::Repeat => {
                                 self.writer.send(&self.name, &message.message().replace(text, ""))?;
                             },
+                            ResponseType::DadJoke => {
+                                self.writer.send(&self.name, &get_dad_joke()?)?;
+                            }
                         }
                         sent_message = true;
                         break;
@@ -187,6 +211,9 @@ impl ChannelHandler {
                             ResponseType::Repeat => {
                                 self.writer.send(&self.name, &message.message().replace(text, ""))?;
                             },
+                            ResponseType::DadJoke => {
+                                self.writer.send(&self.name, &get_dad_joke()?)?;
+                            }
                         }
                         sent_message = true;
                         break;
@@ -201,6 +228,9 @@ impl ChannelHandler {
                             ResponseType::Repeat => {
                                 self.writer.send(&self.name, &message.message().replace(text, ""))?;
                             },
+                            ResponseType::DadJoke => {
+                                self.writer.send(&self.name, &get_dad_joke()?)?;
+                            }
                         }
                         sent_message = true;
                         break;
@@ -216,6 +246,9 @@ impl ChannelHandler {
                             ResponseType::Repeat => {
                                 self.writer.send(&self.name, &message.message())?;
                             },
+                            ResponseType::DadJoke => {
+                                self.writer.send(&self.name, &get_dad_joke()?)?;
+                            }
                         }
                         sent_message = true;
                         break;

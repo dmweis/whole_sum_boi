@@ -36,6 +36,9 @@ bots:
           Contains: "nominations"
         response:
           Static: "1. Uško 2. Blurp"
+      - trigger:
+          Contains: "dad joke"
+        response: DadJoke
       # - trigger:
       #     Contains: "potato"
       #   response:
