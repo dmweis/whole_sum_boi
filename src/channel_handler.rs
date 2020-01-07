@@ -14,9 +14,24 @@ use reqwest;
 pub enum TriggerType {
     Contains(String),
     StartsWith(String),
-    Equivalent(String),
     EndsWith(String),
+    Equivalent(String),
     RegexMatch(String),
+}
+
+impl TriggerType {
+    fn check_match(&self, message: &str) -> Result<bool, Box<dyn Error>> {
+        Ok(match self {
+            TriggerType::Contains(text) => message.to_lowercase().contains(&text.to_lowercase()),
+            TriggerType::StartsWith(text) => message.to_lowercase().starts_with(&text.to_lowercase()),
+            TriggerType::EndsWith(text) => message.to_lowercase().ends_with(&text.to_lowercase()),
+            TriggerType::Equivalent(text) => message.to_lowercase() == text.to_lowercase(),
+            TriggerType::RegexMatch(pattern) => {
+                let matcher = Regex::new(&pattern)?;
+                matcher.is_match(&message.to_lowercase())
+            }
+        })
+    }
 }
 
 /// Data structure for representing type
@@ -167,93 +182,26 @@ impl ChannelHandler {
         // handle message
         let mut sent_message = false;
         for handler in &self.handlers {
-            match &handler.trigger {
-                TriggerType::Contains(text) => {
-                    if message_text.to_lowercase().contains(&text.to_lowercase()) {
-                        match &handler.response {
-                            ResponseType::Static(response_text) => {
-                                self.writer.send(&self.name, &response_text)?;
-                            },
-                            ResponseType::Repeat => {
-                                self.writer.send(&self.name, &message.message().replace(text, ""))?;
-                            },
-                            ResponseType::DadJoke => {
-                                self.writer.send(&self.name, &get_dad_joke()?)?;
-                            }
-                        }
-                        sent_message = true;
-                        break;
-                    }
-                },
-                TriggerType::Equivalent(text) => {
-                    if message_text.to_lowercase() == text.to_lowercase() {
-                        match &handler.response {
-                            ResponseType::Static(response_text) => {
-                                self.writer.send(&self.name, &response_text)?;
-                            },
-                            ResponseType::Repeat => {
-                                self.writer.send(&self.name, &message.message().replace(text, ""))?;
-                            },
-                            ResponseType::DadJoke => {
-                                self.writer.send(&self.name, &get_dad_joke()?)?;
-                            }
-                        }
-                        sent_message = true;
-                        break;
-                    }
-                },
-                TriggerType::StartsWith(text) => {
-                    if message_text.to_lowercase().starts_with(&text.to_lowercase()) {
-                        match &handler.response {
-                            ResponseType::Static(response_text) => {
-                                self.writer.send(&self.name, &response_text)?;
-                            },
-                            ResponseType::Repeat => {
-                                self.writer.send(&self.name, &message.message().replace(text, ""))?;
-                            },
-                            ResponseType::DadJoke => {
-                                self.writer.send(&self.name, &get_dad_joke()?)?;
-                            }
-                        }
-                        sent_message = true;
-                        break;
-                    }
-                },
-                TriggerType::EndsWith(text) => {
-                    if message_text.to_lowercase().ends_with(&text.to_lowercase()) {
-                        match &handler.response {
-                            ResponseType::Static(response_text) => {
-                                self.writer.send(&self.name, &response_text)?;
-                            },
-                            ResponseType::Repeat => {
-                                self.writer.send(&self.name, &message.message().replace(text, ""))?;
-                            },
-                            ResponseType::DadJoke => {
-                                self.writer.send(&self.name, &get_dad_joke()?)?;
-                            }
-                        }
-                        sent_message = true;
-                        break;
-                    }
-                },
-                TriggerType::RegexMatch(pattern) => {
-                    let matcher = Regex::new(&pattern)?;
-                    if matcher.is_match(&message_text.to_lowercase()) {
-                        match &handler.response {
-                            ResponseType::Static(response_text) => {
-                                self.writer.send(&self.name, &response_text)?;
-                            },
-                            ResponseType::Repeat => {
-                                self.writer.send(&self.name, &message.message())?;
-                            },
-                            ResponseType::DadJoke => {
-                                self.writer.send(&self.name, &get_dad_joke()?)?;
-                            }
-                        }
-                        sent_message = true;
-                        break;
+            if handler.trigger.check_match(&message_text)? {
+                match &handler.response {
+                    ResponseType::Static(response_text) => {
+                        self.writer.send(&self.name, &response_text)?;
+                    },
+                    ResponseType::Repeat => {
+                        let message_to_send = message_text
+                                            .split(":")
+                                            .into_iter()
+                                            .skip(1)
+                                            .collect::<Vec<&str>>()
+                                            .join("");
+                        self.writer.send(&self.name, message_to_send)?;
+                    },
+                    ResponseType::DadJoke => {
+                        self.writer.send(&self.name, &get_dad_joke()?)?;
                     }
                 }
+                sent_message = true;
+                break;
             }
         }
         if sent_message {
