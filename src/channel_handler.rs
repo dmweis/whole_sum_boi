@@ -5,6 +5,7 @@ use std::error::*;
 use serde::{Serialize, Deserialize};
 use std::fs::{self, File};
 use std::io::prelude::*;
+use regex::Regex;
 
 /// Data structure for representing when an
 /// action should match message
@@ -14,6 +15,7 @@ pub enum TriggerType {
     StartsWith(String),
     Equivalent(String),
     EndsWith(String),
+    RegexMatch(String),
 }
 
 /// Data structure for representing type
@@ -198,6 +200,21 @@ impl ChannelHandler {
                             },
                             ResponseType::Repeat => {
                                 self.writer.send(&self.name, &message.message().replace(text, ""))?;
+                            },
+                        }
+                        sent_message = true;
+                        break;
+                    }
+                },
+                TriggerType::RegexMatch(pattern) => {
+                    let matcher = Regex::new(&pattern)?;
+                    if matcher.is_match(&message_text.to_lowercase()) {
+                        match &handler.response {
+                            ResponseType::Static(response_text) => {
+                                self.writer.send(&self.name, &response_text)?;
+                            },
+                            ResponseType::Repeat => {
+                                self.writer.send(&self.name, &message.message())?;
                             },
                         }
                         sent_message = true;

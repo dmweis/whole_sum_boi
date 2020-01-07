@@ -18,19 +18,7 @@ bots:
         response:
           Static: Did you mean hats?
       - trigger:
-          Contains: " hats"
-        response:
-          Static: "@consideratepotato could you please adjust the hats and googly eyes?"
-      - trigger:
-          StartsWith: "hats "
-        response:
-          Static: "@consideratepotato could you please adjust the hats and googly eyes?"
-      - trigger:
-          EndsWith: " hats"
-        response:
-          Static: "@consideratepotato could you please adjust the hats and googly eyes?"
-      - trigger:
-          Equivalent: "hats"
+          RegexMatch: "\\bhats\\b"
         response:
           Static: "@consideratepotato could you please adjust the hats and googly eyes?"
       - trigger:
