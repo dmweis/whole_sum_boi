@@ -215,7 +215,6 @@ impl ChannelHandler {
         Ok(())
     }
 
-
     #[allow(dead_code)]
     pub fn add_handler(&mut self, trigger_type: TriggerType, response: ResponseType) {
         self.handlers.push(Action::new(trigger_type, response));

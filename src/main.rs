@@ -8,16 +8,29 @@ use twitchchat::commands;
 use twitchchat::*;
 use log::*;
 use simplelog::*;
+use clap::{Arg, App};
 
 fn main() -> Result<(), Box<dyn error::Error>> {
-    let file = OpenOptions::new()
+    let matches = App::new("WholeSumBoi")
+                          .version("0.0.1")
+                          .author("David W. <dweis7@gmail.com>")
+                          .about("Wholesome twitch bot")
+                          .arg(Arg::with_name("config_path")
+                               .short("p")
+                               .long("path")
+                               .value_name("CONFIG")
+                               .help("Sets a custom config file")
+                               .takes_value(true))
+                          .get_matches();
+    let config_path = matches.value_of("config_path").unwrap_or("example.yaml");
+    let log_file = OpenOptions::new()
             .append(true)
             .create(true)
             .open("WholeSumBoi.log");
     CombinedLogger::init(
         vec![
             TermLogger::new(LevelFilter::Info, Config::default(), TerminalMode::Mixed).unwrap(),
-            WriteLogger::new(LevelFilter::Info, Config::default(), file.unwrap()),
+            WriteLogger::new(LevelFilter::Info, Config::default(), log_file.unwrap()),
         ]
     ).unwrap();
 
@@ -34,7 +47,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     
     let writer = client.writer();
 
-    let mut bot_handler = BotHandler::load_yaml("example.yaml", writer)?;
+    let mut bot_handler = BotHandler::load_yaml(config_path, writer)?;
 
     for event in &mut client {
         match event {
