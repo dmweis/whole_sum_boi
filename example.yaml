@@ -31,7 +31,7 @@ bots:
       - trigger:
           Contains: "discord"
         response:
-          Static: "You can join consideratepotato's discord here: https://discord.gg/eP7gV4v"
+          Static: "You can join consideratepotato's discord here: ****************"
       - trigger:
           Contains: "nominations"
         response:
