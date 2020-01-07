@@ -45,6 +45,11 @@ impl BotHandler {
         }
     }
 
+    #[allow(dead_code)]
+    pub fn get_bot_mut(&mut self, key: &str) -> Option<&mut ChannelHandler> {
+        self.bots.get_mut(key)
+    }
+
     pub fn join_channels(&mut self) -> Result<(), Box<dyn Error>> {
         for (_, handler) in &mut self.bots {
             handler.join_channel()?;

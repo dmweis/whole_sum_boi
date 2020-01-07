@@ -13,6 +13,7 @@ pub enum TriggerType {
     Contains(String),
     StartsWith(String),
     Equivalent(String),
+    EndsWith(String),
 }
 
 /// Data structure for representing type
@@ -189,6 +190,20 @@ impl ChannelHandler {
                         break;
                     }
                 },
+                TriggerType::EndsWith(text) => {
+                    if message_text.to_lowercase().ends_with(&text.to_lowercase()) {
+                        match &handler.response {
+                            ResponseType::Static(response_text) => {
+                                self.writer.send(&self.name, &response_text)?;
+                            },
+                            ResponseType::Repeat => {
+                                self.writer.send(&self.name, &message.message().replace(text, ""))?;
+                            },
+                        }
+                        sent_message = true;
+                        break;
+                    }
+                }
             }
         }
         if sent_message {

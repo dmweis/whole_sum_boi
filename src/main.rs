@@ -36,6 +36,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 
     let mut bot_handler = BotHandler::load_yaml("example.yaml", writer)?;
 
+    bot_handler.save_json("example.json")?;
+
     for event in &mut client {
         match event {
             Event::TwitchReady(usr) => {

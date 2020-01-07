@@ -22,7 +22,11 @@ bots:
         response:
           Static: "@consideratepotato could you please adjust the hats and googly eyes?"
       - trigger:
-          Contains: "hats "
+          StartsWith: "hats "
+        response:
+          Static: "@consideratepotato could you please adjust the hats and googly eyes?"
+      - trigger:
+          EndsWith: " hats"
         response:
           Static: "@consideratepotato could you please adjust the hats and googly eyes?"
       - trigger:
