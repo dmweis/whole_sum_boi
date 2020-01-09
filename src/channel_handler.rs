@@ -7,6 +7,7 @@ use std::fs::{self, File};
 use std::io::prelude::*;
 use regex::Regex;
 use reqwest;
+use log::*;
 
 /// Data structure for representing when an
 /// action should match message
@@ -174,7 +175,7 @@ impl ChannelHandler {
         // check timeout
         if let Some(time) = self.user_timeouts.get(&username) {
             if time.elapsed() <= self.user_timeout {
-                println!("user {} timed out {} out of {}", &username, &time.elapsed().as_secs_f32(), self.user_timeout.as_secs_f32());
+                info!("user {} timed out {} out of {}", &username, &time.elapsed().as_secs_f32(), self.user_timeout.as_secs_f32());
                 return Ok(());
             }
         }
@@ -185,6 +186,7 @@ impl ChannelHandler {
             if handler.trigger.check_match(&message_text)? {
                 match &handler.response {
                     ResponseType::Static(response_text) => {
+                        info!("Sent message {} into {}", &response_text, &self.name);
                         self.writer.send(&self.name, &response_text)?;
                     },
                     ResponseType::Repeat => {
@@ -194,10 +196,13 @@ impl ChannelHandler {
                                             .skip(1)
                                             .collect::<Vec<&str>>()
                                             .join("");
+                        info!("Sent message {} into {}", &message_to_send, &self.name);
                         self.writer.send(&self.name, message_to_send)?;
                     },
                     ResponseType::DadJoke => {
-                        self.writer.send(&self.name, &get_dad_joke()?)?;
+                        let dad_joke = get_dad_joke()?;
+                        info!("Sent message {} into {}", &dad_joke, &self.name);
+                        self.writer.send(&self.name, &dad_joke)?;
                     }
                 }
                 sent_message = true;
